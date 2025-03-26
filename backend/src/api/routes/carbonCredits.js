@@ -1,30 +1,44 @@
-// src/api/routes/carbonCredits.js
 const express = require('express');
-const { carbonCreditContract } = require('../../utils/web3');
+const { check } = require('express-validator');
+const carbonCreditsController = require('../controllers/carbonCreditsController');
+const { validateRequest } = require('../middleware/validation');
+const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/:tokenId', async (req, res) => {
-  try {
-    const tokenId = req.params.tokenId;
-    const creditDetails = await carbonCreditContract.getCreditDetails(tokenId);
-    res.json(creditDetails);
-  } catch (error) {
-    console.error('Error fetching credit details:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+// Get carbon credit details by token ID (public)
+router.get('/:tokenId', carbonCreditsController.getCreditDetails);
 
-router.post('/mint', async (req, res) => {
-  try {
-    const { recipient, amount, projectType, validityPeriod, metadataURI } = req.body;
-    const tx = await carbonCreditContract.mintCredit(recipient, amount, projectType, validityPeriod, metadataURI);
-    await tx.wait();
-    res.json({ success: true, transactionHash: tx.hash });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Protected routes
+router.use(protect);
+
+// Get all carbon credits for a user
+router.get('/user/credits', carbonCreditsController.getUserCredits);
+
+// Admin and verifier only routes
+router.use(authorize('admin', 'verifier'));
+
+// Mint new carbon credits
+router.post(
+  '/mint',
+  [
+    check('projectId', 'Project ID is required').isMongoId(),
+    check('amount', 'Amount must be a positive number').isInt({ min: 1 })
+  ],
+  validateRequest,
+  carbonCreditsController.mintCarbonCredits
+);
+
+// Retire carbon credits (any authenticated user)
+router.post(
+  '/retire',
+  [
+    check('tokenId', 'Token ID is required').isNumeric(),
+    check('amount', 'Amount must be a positive number').isInt({ min: 1 })
+  ],
+  validateRequest,
+  carbonCreditsController.retireCredits
+);
 
 module.exports = router;
 

@@ -12,7 +12,6 @@ contract CarbonCreditMarket is Ownable {
     }
 
     IERC721 public carbonCreditToken;
-    
     mapping(uint256 => Listing) public listings;
     
     event CreditListed(uint256 indexed tokenId, address indexed seller, uint256 price);

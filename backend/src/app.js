@@ -1,149 +1,107 @@
-// // src/app.js
-// require('dotenv').config();
-// const express = require('express');
-// const cors = require('cors');
-// const path = require('path');
-
-// const carbonCreditsRouter = require('./api/routes/carbonCredits');
-// const verificationRouter = require('./api/routes/verification');
-
-// const app = express();
-// const port = process.env.PORT || 3000;
-
-
-
-// app.use(express.static(path.join(__dirname, '../../frontend/build')));
-
-// app.get('/', function (req, res) {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
-
-
-
-// const corsOptions = {
-//   origin: 'http://localhost:3000',
-//   optionsSuccessStatus: 200 
-// };
-
-// app.use(cors(corsOptions));
-
-
-// app.use(express.json());
-
-// app.use('/api/carbon-credits', carbonCreditsRouter);
-// app.use('/api/verification', verificationRouter);
-
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../../frontend/build', 'index.html'));
-// });
-
-
-// app.listen(port, () => {
-//   console.log(`Server is running on port ${port}`);
-// });
-
-
-
-
-
-
-
-
 require('dotenv').config();
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const { connectDatabase } = require('./config/database');
+const { verifyContractAddresses } = require('./utils/web3');
+const logger = require('./utils/logger');
 
+// Import routes
+const authRoutes = require('./api/routes/auth');
+const userRoutes = require('./api/routes/users');
+const projectRoutes = require('./api/routes/projects');
+const carbonCreditsRoutes = require('./api/routes/carbonCredits');
+const verificationRoutes = require('./api/routes/verification');
+const marketplaceRoutes = require('./api/routes/marketplace');
+const ipfsRoutes = require('./api/routes/ipfs');
+const analyticsRoutes = require('./api/routes/analytics');
 
-const carbonCreditsRouter = require('./api/routes/carbonCredits');
-const verificationRouter = require('./api/routes/verification');
-
+// Initialize express app
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
+// Security middleware
+app.use(helmet());
+app.use(
+  cors({
+    origin: process.env.NODE_ENV === 'production' 
+      ? process.env.PRODUCTION_CLIENT_URL 
+      : ['http://localhost:3000', 'http://localhost:3001'],
+    credentials: true
+  })
+);
 
+// Rate limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Too many requests from this IP, please try again later.'
+});
+app.use('/api/', apiLimiter);
 
-const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.PRODUCTION_CLIENT_URL 
-    : ['http://localhost:3000', 'http://localhost:3001'],
-  optionsSuccessStatus: 200,
-  credentials: true
-};
+// Request parsing
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: false }));
 
+// Logging
+app.use(morgan('dev'));
 
-app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/carbon-credits', carbonCreditsRoutes);
+app.use('/api/verification', verificationRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/ipfs', ipfsRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
-
-app.use('/api/carbon-credits', carbonCreditsRouter);
-app.use('/api/verification', verificationRouter);
-
-
-if (process.env.NODE_ENV === 'production') {
-
-  app.use(express.static(path.join(__dirname, '../../frontend/build')));
-} else {
-
-  app.use(express.static(path.join(__dirname, '../public')));
-}
-
-
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
-
-app.get('/api/docs', (req, res) => {
-  res.json({
-    endpoints: {
-      'GET /api/health': 'Health check endpoint',
-      'GET /api/docs': 'This documentation',
-      '/api/carbon-credits': 'Carbon credits related endpoints',
-      '/api/verification': 'Verification related endpoints'
+// Error handling middleware
+app.use((err, req, res, next) => {
+  logger.error(`${err.name}: ${err.message}`);
+  res.status(err.status || 500).json({
+    error: {
+      message: process.env.NODE_ENV === 'production' 
+        ? 'Something went wrong' 
+        : err.message,
+      status: err.status || 500
     }
   });
 });
 
-
-app.get('*', (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
-    res.sendFile(path.join(__dirname, '../../frontend/build/index.html'));
-  } else {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+// Connect to database and start server
+const startServer = async () => {
+  try {
+    await connectDatabase();
+    logger.info('Database connection established');
+    
+    // Verify blockchain contracts
+    try {
+      const contractStatus = await verifyContractAddresses();
+      logger.info('Contract verification completed', contractStatus);
+    } catch (error) {
+      logger.warn('Contract verification failed:', error.message);
+    }
+    
+    app.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    process.exit(1);
   }
-});
+};
 
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    error: process.env.NODE_ENV === 'production' 
-      ? 'Internal Server Error' 
-      : err.message
-  });
-});
-
-
-app.listen(port, () => {
-  console.log(`
-Server Started Successfully
--------------------------
-🚀 Server is running on port: ${port}
-🌍 Environment: ${process.env.NODE_ENV || 'development'}
-📁 Static files: ${process.env.NODE_ENV === 'production' ? 'frontend/build' : 'public'}
-🔒 CORS enabled for: ${corsOptions.origin}
-  `);
-});
-
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  app.close(() => {
-    console.log('HTTP server closed');
-    process.exit(0);
-  });
-});
+startServer();
 
 module.exports = app;

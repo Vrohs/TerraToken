@@ -1,14 +1,34 @@
 version: '3'
 
 services:
-  terratoken-app:
-    image: your-dockerhub-username/terratoken-app:latest
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend/project
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - ALCHEMY_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/T0qIBsLD5-rVNXm-gJ-dEF1J8ayyVQMM
-      - CARBON_CREDIT_ADDRESS=0xE9C9495bd6a5e121a3Ce6980E8d994Ca5eD7D33C
-      - VERIFICATION_ADDRESS=0xe3750E5a35BF962E0771f56f44c78F024754ce37
-    restart: always
+    volumes:
+      - ./frontend/project:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
