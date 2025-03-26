@@ -11,23 +11,28 @@ import Login from './pages/Login';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 
+// Context
+import { Web3Provider } from './context/Web3Context';
+
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex flex-col">
-        <Navigation />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/submit-project" element={<ProjectSubmission />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <Web3Provider>
+      <Router>
+        <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex flex-col">
+          <Navigation />
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/marketplace" element={<Marketplace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/submit-project" element={<ProjectSubmission />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </Web3Provider>
   );
 }
 

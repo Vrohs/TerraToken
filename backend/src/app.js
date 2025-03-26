@@ -9,6 +9,9 @@ const { connectDatabase } = require('./config/database');
 const { verifyContractAddresses } = require('./utils/web3');
 const logger = require('./utils/logger');
 
+// Import services
+const eventListenerService = require('./services/eventListenerService');
+
 // Import routes
 const authRoutes = require('./api/routes/auth');
 const userRoutes = require('./api/routes/users');
@@ -18,6 +21,7 @@ const verificationRoutes = require('./api/routes/verification');
 const marketplaceRoutes = require('./api/routes/marketplace');
 const ipfsRoutes = require('./api/routes/ipfs');
 const analyticsRoutes = require('./api/routes/analytics');
+const registryRoutes = require('./api/routes/registry');
 
 // Initialize express app
 const app = express();
@@ -60,10 +64,11 @@ app.use('/api/verification', verificationRoutes);
 app.use('/api/marketplace', marketplaceRoutes);
 app.use('/api/ipfs', ipfsRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/registry', registryRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({ status: 'ok', timestamp: new Date() });
 });
 
 // Error handling middleware
@@ -93,6 +98,11 @@ const startServer = async () => {
       logger.warn('Contract verification failed:', error.message);
     }
     
+    // Start blockchain event listeners after DB connection is established
+    eventListenerService.start().catch(err => {
+      logger.error('Failed to start event listeners:', err);
+    });
+
     app.listen(PORT, () => {
       logger.info(`Server running on port ${PORT}`);
     });
@@ -101,6 +111,32 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
+// Process historical events on startup (optional)
+if (process.env.PROCESS_HISTORICAL_EVENTS === 'true') {
+  const fromBlock = parseInt(process.env.HISTORICAL_FROM_BLOCK || '0');
+  eventListenerService.processHistoricalEvents(fromBlock).catch(err => {
+    logger.error('Failed to process historical events:', err);
+  });
+}
+
+// Graceful shutdown
+const gracefulShutdown = async () => {
+  logger.info('Shutting down server...');
+  
+  // Stop event listeners
+  await eventListenerService.stop();
+  
+  // Close database connection
+  await mongoose.disconnect();
+  logger.info('Database connection closed');
+  
+  process.exit(0);
+};
+
+// Listen for termination signals
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 startServer();
 
