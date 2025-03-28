@@ -1,6 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Wallet, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+
+// TypeScript interface for window.ethereum
+declare global {
+  interface Window {
+    ethereum?: {
+      request: (args: { method: string; params?: any[] }) => Promise<any>;
+      on: (event: string, callback: (...args: any[]) => void) => void;
+      removeAllListeners: () => void;
+      isMetaMask?: boolean;
+    }
+  }
+}
+
+interface WalletError extends Error {
+  code?: number;
+}
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,7 +26,6 @@ const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [walletAddress, setWalletAddress] = useState('');
   const [isWalletConnecting, setIsWalletConnecting] = useState(false);
 
   const isMetaMaskAvailable = typeof window !== 'undefined' && window.ethereum;
@@ -19,7 +34,7 @@ const Login = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  const handleEmailLogin = async (e) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
@@ -60,9 +75,8 @@ const Login = () => {
     
     try {
       // Request accounts access
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await window.ethereum!.request({ method: 'eth_requestAccounts' });
       const address = accounts[0];
-      setWalletAddress(address);
       
       // In a real app, you would now verify ownership of this wallet
       // by asking the user to sign a message, then verify the signature on your backend
@@ -79,11 +93,13 @@ const Login = () => {
       // Redirect to dashboard
       navigate('/dashboard');
     } catch (err) {
-      if (err.code === 4001) {
+      const walletError = err as WalletError;
+      if (walletError.code === 4001) {
         // User rejected the request
         setError('Please connect your wallet to continue.');
       } else {
         setError('Failed to connect wallet. Please try again.');
+        console.error(walletError);
       }
     } finally {
       setIsWalletConnecting(false);

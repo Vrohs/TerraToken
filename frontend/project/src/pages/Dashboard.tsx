@@ -1,8 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart2, Clock, Award, RefreshCw, ArrowDown } from 'lucide-react';
 
+// Define interfaces for better type safety
+interface CreditItem {
+  id: number;
+  projectName: string;
+  amount: number;
+  purchaseDate: string;
+  status: string;
+  co2Offset: number;
+}
+
+interface TransactionItem {
+  id: number;
+  type: string;
+  projectName: string;
+  date: string;
+  amount: number;
+  value: number;
+}
+
+interface StatCardProps {
+  title: string;
+  value: number;
+  unit: string;
+  icon: React.ReactNode;
+}
+
 // Mock data for development - replace with API calls in production
-const mockPortfolio = [
+const mockPortfolio: CreditItem[] = [
   {
     id: 1,
     projectName: "Amazon Rainforest Conservation",
@@ -29,7 +55,7 @@ const mockPortfolio = [
   }
 ];
 
-const mockTransactions = [
+const mockTransactions: TransactionItem[] = [
   {
     id: 101,
     type: "Purchase",
@@ -61,7 +87,7 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState(mockTransactions);
   const [activeTab, setActiveTab] = useState('portfolio');
   const [isRetireModalOpen, setIsRetireModalOpen] = useState(false);
-  const [selectedCredit, setSelectedCredit] = useState(null);
+  const [selectedCredit, setSelectedCredit] = useState<CreditItem | null>(null);
   const [retireAmount, setRetireAmount] = useState(1);
 
   // Calculate total impact
@@ -69,7 +95,7 @@ const Dashboard = () => {
   const totalOffset = portfolio.reduce((sum, credit) => sum + credit.co2Offset, 0);
   const activeCredits = portfolio.filter(credit => credit.status === 'Active');
 
-  const openRetireModal = (credit) => {
+  const openRetireModal = (credit: CreditItem) => {
     setSelectedCredit(credit);
     setRetireAmount(1);
     setIsRetireModalOpen(true);
@@ -80,7 +106,7 @@ const Dashboard = () => {
     // For mock purposes, we'll update the local state
     setPortfolio(prevPortfolio => 
       prevPortfolio.map(credit => 
-        credit.id === selectedCredit.id 
+        credit.id === selectedCredit!.id 
           ? { ...credit, status: 'Retired', amount: credit.amount - retireAmount } 
           : credit
       )
@@ -90,7 +116,7 @@ const Dashboard = () => {
       {
         id: Date.now(),
         type: "Retirement",
-        projectName: selectedCredit.projectName,
+        projectName: selectedCredit!.projectName,
         date: new Date().toISOString().split('T')[0],
         amount: retireAmount,
         value: 0 // Value doesn't apply to retirements
@@ -284,7 +310,7 @@ const Dashboard = () => {
 };
 
 // Stat Card Component
-const StatCard = ({ title, value, unit, icon }) => {
+const StatCard = ({ title, value, unit, icon }: StatCardProps) => {
   return (
     <div className="bg-white p-6 rounded-xl shadow">
       <div className="flex justify-between items-start">

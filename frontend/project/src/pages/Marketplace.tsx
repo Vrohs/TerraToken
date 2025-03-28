@@ -1,8 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Filter, Info } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Info } from 'lucide-react';
+
+// Define TypeScript interface for carbon credit
+interface CarbonCredit {
+  id: number;
+  projectName: string;
+  projectType: string;
+  location: string;
+  creditsAvailable: number;
+  pricePerCredit: number;
+  totalCO2Offset: number;
+  verifiedBy: string;
+  imageUrl: string;
+}
 
 // Mock data for development - you'll replace this with API calls
-const mockCarbonCredits = [
+const mockCarbonCredits: CarbonCredit[] = [
   {
     id: 1,
     projectName: "Amazon Rainforest Conservation",
@@ -39,7 +52,7 @@ const mockCarbonCredits = [
 ];
 
 const Marketplace = () => {
-  const [credits, setCredits] = useState(mockCarbonCredits);
+  const [credits] = useState(mockCarbonCredits);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
 
@@ -93,7 +106,7 @@ const Marketplace = () => {
 };
 
 // Carbon Credit Card Component
-const CreditCard = ({ credit }) => {
+const CreditCard = ({ credit }: { credit: CarbonCredit }) => {
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 hover:shadow-lg transition">
       <div className="h-48 overflow-hidden">

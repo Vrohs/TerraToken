@@ -1,6 +1,18 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { ethers } from 'ethers';
 
+// Add Ethereum provider type declaration
+declare global {
+  interface Window {
+    ethereum?: {
+      request: (args: { method: string; params?: any[] }) => Promise<any>;
+      on: (event: string, callback: (...args: any[]) => void) => void;
+      removeAllListeners: () => void;
+      isMetaMask?: boolean;
+    };
+  }
+}
+
 interface Web3ContextType {
   isConnected: boolean;
   walletAddress: string | null;
@@ -20,7 +32,8 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const checkConnection = async () => {
-      if (window.ethereum) {
+      // Check if ethereum is available in window
+      if (typeof window !== 'undefined' && window.ethereum) {
         try {
           const ethProvider = new ethers.BrowserProvider(window.ethereum);
           const accounts = await ethProvider.listAccounts();
@@ -41,7 +54,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
     checkConnection();
 
     // Setup event listeners
-    if (window.ethereum) {
+    if (typeof window !== 'undefined' && window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts: string[]) => {
         if (accounts.length > 0) {
           setWalletAddress(accounts[0]);
@@ -58,14 +71,14 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     return () => {
-      if (window.ethereum) {
+      if (typeof window !== 'undefined' && window.ethereum) {
         window.ethereum.removeAllListeners();
       }
     };
   }, []);
 
   const connectWallet = async () => {
-    if (!window.ethereum) {
+    if (typeof window === 'undefined' || !window.ethereum) {
       alert('Please install MetaMask to connect a wallet');
       return;
     }

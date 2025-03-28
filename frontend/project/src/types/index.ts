@@ -48,6 +48,11 @@ export interface Transaction {
 // Add window.ethereum type
 declare global {
   interface Window {
-    ethereum: any;
+    ethereum?: {
+      request: (args: { method: string; params?: any[] }) => Promise<any>;
+      on: (event: string, callback: (...args: any[]) => void) => void;
+      removeAllListeners: () => void;
+      isMetaMask?: boolean;
+    };
   }
 }

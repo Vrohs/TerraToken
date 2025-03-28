@@ -1,6 +1,6 @@
-import React from 'react';
+// import React from 'react';
 import { Link } from 'react-router-dom';
-import { Leaf, Twitter, Linkedin, GitHub } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -17,7 +17,7 @@ const Footer = () => {
               Building a transparent carbon credit marketplace using blockchain technology.
             </p>
             <div className="mt-4 flex space-x-4">
-              <a href="#" className="text-gray-500 hover:text-gray-700">
+              {/* <a href="#" className="text-gray-500 hover:text-gray-700">
                 <Twitter className="h-5 w-5" />
               </a>
               <a href="#" className="text-gray-500 hover:text-gray-700">
@@ -25,7 +25,7 @@ const Footer = () => {
               </a>
               <a href="#" className="text-gray-500 hover:text-gray-700">
                 <GitHub className="h-5 w-5" />
-              </a>
+              </a> */}
             </div>
           </div>
           
@@ -59,7 +59,7 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
+                <a href="https://github.com/Vrohs/TerraToken/tree/master" className="text-gray-600 hover:text-gray-900">
                   Documentation
                 </a>
               </li>

@@ -5,8 +5,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-const { connectDatabase } = require('./config/database');
-const { verifyContractAddresses } = require('./utils/web3');
 const logger = require('./utils/logger');
 
 // Import services
@@ -33,7 +31,7 @@ app.use(
   cors({
     origin: process.env.NODE_ENV === 'production' 
       ? process.env.PRODUCTION_CLIENT_URL 
-      : ['http://localhost:3000', 'http://localhost:3001'],
+      : ['http://localhost:3000', 'http://localhost:5173'],
     credentials: true
   })
 );
@@ -87,22 +85,35 @@ app.use((err, req, res, next) => {
 // Connect to database and start server
 const startServer = async () => {
   try {
-    await connectDatabase();
-    logger.info('Database connection established');
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI);
+    logger.info(`MongoDB connected: ${mongoose.connection.host}`);
     
     // Verify blockchain contracts
     try {
+      const { verifyContractAddresses } = require('./utils/web3');
       const contractStatus = await verifyContractAddresses();
       logger.info('Contract verification completed', contractStatus);
     } catch (error) {
       logger.warn('Contract verification failed:', error.message);
     }
     
-    // Start blockchain event listeners after DB connection is established
-    eventListenerService.start().catch(err => {
-      logger.error('Failed to start event listeners:', err);
-    });
-
+    // Start blockchain event listeners
+    try {
+      await eventListenerService.start();
+      logger.info('Blockchain event listeners started');
+      
+      // Process historical events if enabled
+      if (process.env.PROCESS_HISTORICAL_EVENTS === 'true') {
+        const fromBlock = parseInt(process.env.HISTORICAL_FROM_BLOCK || '0');
+        eventListenerService.processHistoricalEvents(fromBlock).catch(err => {
+          logger.error('Failed to process historical events:', err);
+        });
+      }
+    } catch (error) {
+      logger.error('Failed to start event listeners:', error);
+    }
+    
     app.listen(PORT, () => {
       logger.info(`Server running on port ${PORT}`);
     });
@@ -112,24 +123,25 @@ const startServer = async () => {
   }
 };
 
-// Process historical events on startup (optional)
-if (process.env.PROCESS_HISTORICAL_EVENTS === 'true') {
-  const fromBlock = parseInt(process.env.HISTORICAL_FROM_BLOCK || '0');
-  eventListenerService.processHistoricalEvents(fromBlock).catch(err => {
-    logger.error('Failed to process historical events:', err);
-  });
-}
-
 // Graceful shutdown
 const gracefulShutdown = async () => {
   logger.info('Shutting down server...');
   
   // Stop event listeners
-  await eventListenerService.stop();
+  try {
+    await eventListenerService.stop();
+    logger.info('Event listeners stopped');
+  } catch (error) {
+    logger.error('Error stopping event listeners:', error);
+  }
   
   // Close database connection
-  await mongoose.disconnect();
-  logger.info('Database connection closed');
+  try {
+    await mongoose.disconnect();
+    logger.info('Database connection closed');
+  } catch (error) {
+    logger.error('Error closing database connection:', error);
+  }
   
   process.exit(0);
 };

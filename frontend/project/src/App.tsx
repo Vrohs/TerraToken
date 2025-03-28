@@ -1,6 +1,6 @@
-import React from 'react';
+// import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Leaf, ArrowLeftRight, Shield, BarChart2, Globe2 } from 'lucide-react';
+// import { Leaf, ArrowLeftRight, Shield, BarChart2, Globe2 } from 'lucide-react';
 
 // Pages
 import Home from './pages/Home';

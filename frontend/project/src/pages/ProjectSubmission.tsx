@@ -1,9 +1,40 @@
 import React, { useState } from 'react';
 import { Upload, CheckCircle, AlertCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 
+// Define TypeScript interfaces
+interface FormData {
+  projectName: string;
+  projectType: string;
+  location: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  estimatedCredits: string;
+  methodology: string;
+  contactName: string;
+  contactEmail: string;
+  files: File[];
+}
+
+interface FormErrors {
+  projectName?: string;
+  projectType?: string;
+  location?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  estimatedCredits?: string;
+  methodology?: string;
+  contactName?: string;
+  contactEmail?: string;
+  files?: string;
+  submit?: string;
+  [key: string]: string | undefined;
+}
+
 const ProjectSubmission = () => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     projectName: '',
     projectType: '',
     location: '',
@@ -16,7 +47,7 @@ const ProjectSubmission = () => {
     contactEmail: '',
     files: []
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -30,7 +61,7 @@ const ProjectSubmission = () => {
     'Other'
   ];
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -41,20 +72,20 @@ const ProjectSubmission = () => {
     if (errors[name]) {
       setErrors({
         ...errors,
-        [name]: null
+        [name]: undefined
       });
     }
   };
 
-  const handleFileChange = (e) => {
-    const fileList = Array.from(e.target.files);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = Array.from(e.target.files || []);
     setFormData({
       ...formData,
       files: [...formData.files, ...fileList]
     });
   };
 
-  const removeFile = (fileIndex) => {
+  const removeFile = (fileIndex: number) => {
     const updatedFiles = formData.files.filter((_, index) => index !== fileIndex);
     setFormData({
       ...formData,
@@ -62,8 +93,8 @@ const ProjectSubmission = () => {
     });
   };
 
-  const validateStep = (stepNumber) => {
-    let stepErrors = {};
+  const validateStep = (stepNumber: number) => {
+    let stepErrors: FormErrors = {};
     let isValid = true;
 
     if (stepNumber === 1) {
@@ -105,7 +136,7 @@ const ProjectSubmission = () => {
       if (!formData.estimatedCredits) {
         stepErrors.estimatedCredits = 'Estimated credits is required';
         isValid = false;
-      } else if (isNaN(formData.estimatedCredits) || Number(formData.estimatedCredits) <= 0) {
+      } else if (isNaN(Number(formData.estimatedCredits)) || Number(formData.estimatedCredits) <= 0) {
         stepErrors.estimatedCredits = 'Must be a positive number';
         isValid = false;
       }
@@ -153,7 +184,7 @@ const ProjectSubmission = () => {
     setStep(step - 1);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateStep(step)) return;

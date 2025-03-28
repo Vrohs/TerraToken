@@ -26,7 +26,7 @@ const Navigation = () => {
         console.error("User denied account access");
       }
     } else {
-      setWalletAddress('0x742...3A9f'); // Mock wallet address for demo
+      setWalletAddress('0x21aB7d4CB1dc4D0b4c5A11A09feF461930cF1114');
       setIsWalletConnected(true);
     }
   };

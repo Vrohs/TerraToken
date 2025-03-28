@@ -1,21 +1,34 @@
 import { ethers } from 'ethers';
-import CarbonCreditABI from '../contracts/CarbonCredit.json';
-import CarbonCreditMarketABI from '../contracts/CarbonCreditMarket.json';
+// Using require instead of import for JSON files to avoid TypeScript import errors
+// @ts-ignore
+const CarbonCreditABI = require('../../artifacts/contracts/CarbonCredit.sol/CarbonCredit.json');
+// @ts-ignore
+const CarbonCreditMarketABI = require('../../artifacts/contracts/CarbonCreditMarket.sol/CarbonCreditMarket.json');
+
+// Type definitions for contract return types
+interface CreditDetails {
+  owner: string;
+  amount: bigint;
+  projectType: string;
+  validUntil: bigint;
+  metadataURI: string;
+  isRetired: boolean;
+}
 
 // Contract addresses (would come from environment variables in production)
 const CARBON_CREDIT_ADDRESS = '0x123...'; // Replace with actual address
 const CARBON_CREDIT_MARKET_ADDRESS = '0x456...'; // Replace with actual address
 
-// Initialize connection to the blockchain
+// Initialize connection to the blockchain - Updated for ethers v6
 const getProvider = () => {
   if (window.ethereum) {
-    return new ethers.providers.Web3Provider(window.ethereum);
+    return new ethers.BrowserProvider(window.ethereum);
   }
   // Fallback to a read-only provider if MetaMask isn't available
-  return new ethers.providers.JsonRpcProvider('https://polygon-mumbai.infura.io/v3/YOUR_INFURA_KEY');
+  return new ethers.JsonRpcProvider('https://polygon-mumbai.infura.io/v3/YOUR_INFURA_KEY');
 };
 
-// Get signer for authenticated transactions
+// Get signer for authenticated transactions - Updated for ethers v6
 const getSigner = async () => {
   const provider = getProvider();
   await provider.send("eth_requestAccounts", []);
@@ -34,15 +47,15 @@ const getCarbonMarketContract = async (needSigner = false) => {
 };
 
 // Contract functions
-export const fetchCreditDetails = async (tokenId) => {
+export const fetchCreditDetails = async (tokenId: number): Promise<CreditDetails> => {
   try {
     const contract = await getCarbonCreditContract();
     const creditDetails = await contract.getCreditDetails(tokenId);
     return {
       owner: creditDetails.owner,
-      amount: parseInt(creditDetails.amount),
+      amount: BigInt(creditDetails.amount),
       projectType: creditDetails.projectType,
-      validUntil: new Date(parseInt(creditDetails.validUntil) * 1000),
+      validUntil: BigInt(creditDetails.validUntil),
       metadataURI: creditDetails.metadataURI,
       isRetired: creditDetails.isRetired
     };
@@ -52,7 +65,7 @@ export const fetchCreditDetails = async (tokenId) => {
   }
 };
 
-export const listCreditForSale = async (tokenId, priceInEther) => {
+export const listCreditForSale = async (tokenId: number, priceInEther: string) => {
   try {
     const marketContract = await getCarbonMarketContract(true);
     const creditContract = await getCarbonCreditContract(true);
@@ -62,7 +75,7 @@ export const listCreditForSale = async (tokenId, priceInEther) => {
     await approveTx.wait();
     
     // Then list the credit for sale
-    const priceInWei = ethers.utils.parseEther(priceInEther.toString());
+    const priceInWei = ethers.parseEther(priceInEther);
     const listingTx = await marketContract.listCredit(tokenId, priceInWei);
     const receipt = await listingTx.wait();
     
@@ -76,12 +89,12 @@ export const listCreditForSale = async (tokenId, priceInEther) => {
   }
 };
 
-export const buyCarbonCredit = async (tokenId, priceInEther) => {
+export const buyCarbonCredit = async (tokenId: number, priceInEther: string) => {
   try {
     const marketContract = await getCarbonMarketContract(true);
     
     // Execute purchase
-    const priceInWei = ethers.utils.parseEther(priceInEther.toString());
+    const priceInWei = ethers.parseEther(priceInEther);
     const purchaseTx = await marketContract.buyCredit(tokenId, { value: priceInWei });
     const receipt = await purchaseTx.wait();
     
@@ -95,7 +108,7 @@ export const buyCarbonCredit = async (tokenId, priceInEther) => {
   }
 };
 
-export const retireCredit = async (tokenId) => {
+export const retireCredit = async (tokenId: number) => {
   try {
     const creditContract = await getCarbonCreditContract(true);
     
@@ -115,15 +128,19 @@ export const retireCredit = async (tokenId) => {
 
 export const fetchActiveListings = async () => {
   try {
-    const marketContract = await getCarbonMarketContract();
-    const creditContract = await getCarbonCreditContract();
-    
     // In a production app, you'd use events or The Graph to fetch listings
     // Here we'll simulate fetching active listings
-    const activeListings = [];
+    interface Listing {
+      tokenId: number;
+      seller: string;
+      price: bigint;
+      isActive: boolean;
+    }
+    
+    const activeListings: Listing[] = [];
     
     // This is a placeholder - in a real app, you'd implement proper listing retrieval
-    // using contract events or subgraphs
+    // using contract events or subgraphs with the marketContract
     
     return activeListings;
   } catch (error) {
