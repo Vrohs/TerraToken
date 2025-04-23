@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Leaf, Menu, X } from 'lucide-react';
+import { Leaf, Menu, X, Moon, Sun } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const location = useLocation();
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -37,13 +39,13 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-white dark:bg-dark-primary shadow-sm border-b border-gray-200 dark:border-dark-accent">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <Leaf className="h-8 w-8 text-green-600" />
-            <span className="ml-2 text-xl font-bold text-green-800">TerraToken</span>
+            <span className="ml-2 text-xl font-bold text-green-800 dark:text-terragreen-400">TerraToken</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -54,8 +56,8 @@ const Navigation = () => {
                 to={link.path}
                 className={`${
                   location.pathname === link.path
-                    ? 'text-green-600 font-semibold'
-                    : 'text-gray-600 hover:text-green-600'
+                    ? 'text-green-600 font-semibold dark:text-terragreen-400'
+                    : 'text-gray-600 hover:text-green-600 dark:text-dark-text dark:hover:text-terragreen-400'
                 } transition-colors`}
               >
                 {link.name}
@@ -63,16 +65,28 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Wallet Connection Button */}
-          <div className="hidden md:block">
+          {/* Dark Mode Toggle & Wallet Connection */}
+          <div className="hidden md:flex items-center space-x-4">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-full text-gray-600 hover:bg-gray-100 dark:text-dark-text dark:hover:bg-dark-accent"
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+            
             {isWalletConnected ? (
               <div className="flex items-center">
-                <span className="text-sm text-gray-600 mr-3">
+                <span className="text-sm text-gray-600 mr-3 dark:text-dark-text">
                   {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
                 </span>
                 <button
                   onClick={disconnectWallet}
-                  className="text-gray-600 hover:text-red-600 text-sm"
+                  className="text-gray-600 hover:text-red-600 text-sm dark:text-dark-text dark:hover:text-red-400"
                 >
                   Disconnect
                 </button>
@@ -88,10 +102,22 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-3">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-full text-gray-600 hover:bg-gray-100 dark:text-dark-text dark:hover:bg-dark-accent"
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+            
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-green-600"
+              className="text-gray-600 hover:text-green-600 dark:text-dark-text dark:hover:text-terragreen-400"
             >
               {isMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -105,7 +131,7 @@ const Navigation = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white px-4 pt-2 pb-4 border-t">
+        <div className="md:hidden bg-white dark:bg-dark-primary px-4 pt-2 pb-4 border-t dark:border-dark-accent">
           <div className="flex flex-col space-y-3">
             {navLinks.map((link) => (
               <Link
@@ -113,23 +139,23 @@ const Navigation = () => {
                 to={link.path}
                 className={`${
                   location.pathname === link.path
-                    ? 'text-green-600 font-semibold'
-                    : 'text-gray-600'
+                    ? 'text-green-600 font-semibold dark:text-terragreen-400'
+                    : 'text-gray-600 dark:text-dark-text'
                 } py-2`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {link.name}
               </Link>
             ))}
-            <div className="pt-2 border-t">
+            <div className="pt-2 border-t dark:border-dark-accent">
               {isWalletConnected ? (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-gray-600 dark:text-dark-text">
                     {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
                   </span>
                   <button
                     onClick={disconnectWallet}
-                    className="text-gray-600 hover:text-red-600 text-sm"
+                    className="text-gray-600 hover:text-red-600 text-sm dark:text-dark-text dark:hover:text-red-400"
                   >
                     Disconnect
                   </button>

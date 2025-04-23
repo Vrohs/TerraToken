@@ -24,7 +24,7 @@ interface TestimonialCardProps {
 
 const Home = () => {
   return (
-    <div>
+    <div className="dark:bg-dark-primary">
       {/* Hero Section with Background Image */}
       <section className="relative py-36 text-center">
         {/* Background Image with Overlay */}
@@ -55,7 +55,7 @@ const Home = () => {
               <Link to="/marketplace" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-semibold transition shadow-lg hover:shadow-xl">
                 Browse Marketplace
               </Link>
-              <Link to="/submit-project" className="bg-white text-green-800 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition shadow-lg">
+              <Link to="/submit-project" className="bg-white dark:bg-dark-accent text-green-800 dark:text-terragreen-400 hover:bg-gray-100 dark:hover:bg-dark-secondary px-8 py-4 rounded-lg font-semibold transition shadow-lg">
                 Register a Project
               </Link>
             </div>
@@ -65,13 +65,13 @@ const Home = () => {
         {/* Curved divider */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full">
-            <path fill="#ffffff" fillOpacity="1" d="M0,96L80,117.3C160,139,320,181,480,186.7C640,192,800,160,960,154.7C1120,149,1280,171,1360,181.3L1440,192L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
+            <path fill={document.documentElement.classList.contains('dark') ? '#1a1a1a' : '#ffffff'} fillOpacity="1" d="M0,96L80,117.3C160,139,320,181,480,186.7C640,192,800,160,960,154.7C1120,149,1280,171,1360,181.3L1440,192L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path>
           </svg>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white dark:bg-dark-primary">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <StatsCard value="1.2M+" label="Tons of CO₂ Offset" />
@@ -83,12 +83,12 @@ const Home = () => {
       </section>
       
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-dark-primary">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-block bg-green-100 text-green-600 px-4 py-1 rounded-full text-sm font-semibold mb-3">How It Works</div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Revolutionizing Carbon Credit Trading</h2>
-            <p className="text-gray-600 text-lg">Our blockchain platform ensures transparency, security, and efficiency in the carbon credit marketplace.</p>
+            <div className="inline-block bg-green-100 dark:bg-terragreen-900/30 text-green-600 dark:text-terragreen-400 px-4 py-1 rounded-full text-sm font-semibold mb-3">How It Works</div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-dark-text">Revolutionizing Carbon Credit Trading</h2>
+            <p className="text-gray-600 dark:text-dark-muted text-lg">Our blockchain platform ensures transparency, security, and efficiency in the carbon credit marketplace.</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-10">
@@ -112,12 +112,12 @@ const Home = () => {
       </section>
       
       {/* Testimonials Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 dark:bg-dark-secondary">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-block bg-green-100 text-green-600 px-4 py-1 rounded-full text-sm font-semibold mb-3">Testimonials</div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Trusted by Industry Leaders</h2>
-            <p className="text-gray-600 text-lg">Hear from organizations that have successfully used our platform to meet their sustainability goals.</p>
+            <div className="inline-block bg-green-100 dark:bg-terragreen-900/30 text-green-600 dark:text-terragreen-400 px-4 py-1 rounded-full text-sm font-semibold mb-3">Testimonials</div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 dark:text-dark-text">Trusted by Industry Leaders</h2>
+            <p className="text-gray-600 dark:text-dark-muted text-lg">Hear from organizations that have successfully used our platform to meet their sustainability goals.</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -159,18 +159,18 @@ const Home = () => {
       </section>
       
       {/* Partners Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white dark:bg-dark-primary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-gray-800">Trusted by Organizations Worldwide</h2>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-dark-text">Trusted by Organizations Worldwide</h2>
           </div>
           <div className="flex justify-center items-center flex-wrap gap-12 opacity-70">
             {/* Add partner logos here */}
-            <div className="h-10 w-32 bg-gray-200 rounded"></div>
-            <div className="h-10 w-32 bg-gray-200 rounded"></div>
-            <div className="h-10 w-32 bg-gray-200 rounded"></div>
-            <div className="h-10 w-32 bg-gray-200 rounded"></div>
-            <div className="h-10 w-32 bg-gray-200 rounded"></div>
+            <div className="h-10 w-32 bg-gray-200 dark:bg-dark-accent rounded"></div>
+            <div className="h-10 w-32 bg-gray-200 dark:bg-dark-accent rounded"></div>
+            <div className="h-10 w-32 bg-gray-200 dark:bg-dark-accent rounded"></div>
+            <div className="h-10 w-32 bg-gray-200 dark:bg-dark-accent rounded"></div>
+            <div className="h-10 w-32 bg-gray-200 dark:bg-dark-accent rounded"></div>
           </div>
         </div>
       </section>
@@ -181,12 +181,12 @@ const Home = () => {
 // Feature Card Component
 const FeatureCard = ({ icon, title, description }: FeatureCardProps) => {
   return (
-    <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition group">
-      <div className="bg-green-100 p-3 rounded-lg inline-block mb-4 group-hover:bg-green-500 group-hover:text-white transition-colors">
+    <div className="bg-white dark:bg-dark-secondary p-8 rounded-xl shadow-sm border border-gray-100 dark:border-dark-accent hover:shadow-lg transition group">
+      <div className="bg-green-100 dark:bg-terragreen-800/30 p-3 rounded-lg inline-block mb-4 group-hover:bg-green-500 group-hover:text-white transition-colors">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold mb-3">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+      <h3 className="text-xl font-semibold mb-3 dark:text-dark-text">{title}</h3>
+      <p className="text-gray-600 dark:text-dark-muted">{description}</p>
     </div>
   );
 };
@@ -195,8 +195,8 @@ const FeatureCard = ({ icon, title, description }: FeatureCardProps) => {
 const StatsCard = ({ value, label }: StatsCardProps) => {
   return (
     <div>
-      <div className="text-3xl md:text-4xl font-bold text-green-600 mb-1">{value}</div>
-      <div className="text-gray-600">{label}</div>
+      <div className="text-3xl md:text-4xl font-bold text-green-600 dark:text-terragreen-400 mb-1">{value}</div>
+      <div className="text-gray-600 dark:text-dark-muted">{label}</div>
     </div>
   );
 };
@@ -204,16 +204,16 @@ const StatsCard = ({ value, label }: StatsCardProps) => {
 // Testimonial Card Component
 const TestimonialCard = ({ quote, author, role }: TestimonialCardProps) => {
   return (
-    <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+    <div className="bg-white dark:bg-dark-accent p-8 rounded-xl shadow-sm border border-gray-100 dark:border-dark-secondary hover:shadow-md transition">
       <div className="text-green-500 mb-4">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5"></path>
           <path d="M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v6c0 2.667 -1.333 4.333 -4 5"></path>
         </svg>
       </div>
-      <p className="text-gray-700 mb-6 italic">{quote}</p>
-      <div className="font-semibold">{author}</div>
-      <div className="text-gray-500 text-sm">{role}</div>
+      <p className="text-gray-700 dark:text-dark-text mb-6 italic">{quote}</p>
+      <div className="font-semibold dark:text-dark-text">{author}</div>
+      <div className="text-gray-500 dark:text-dark-muted text-sm">{role}</div>
     </div>
   );
 };

@@ -89,6 +89,7 @@ const Dashboard = () => {
   const [isRetireModalOpen, setIsRetireModalOpen] = useState(false);
   const [selectedCredit, setSelectedCredit] = useState<CreditItem | null>(null);
   const [retireAmount, setRetireAmount] = useState(1);
+  const [isWalletConnected, setIsWalletConnected] = useState(true);
 
   // Calculate total impact
   const totalCredits = portfolio.reduce((sum, credit) => sum + credit.amount, 0);
@@ -127,9 +128,23 @@ const Dashboard = () => {
     setIsRetireModalOpen(false);
   };
 
+  if (!isWalletConnected) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center dark:bg-dark-primary min-h-screen">
+        <div className="max-w-lg mx-auto bg-white dark:bg-dark-secondary p-8 rounded-xl shadow-md">
+          <h2 className="text-2xl font-bold mb-4 dark:text-dark-text">Connect Wallet to View Dashboard</h2>
+          <p className="text-gray-600 dark:text-dark-muted mb-6">Please connect your wallet to access your carbon credit portfolio and transaction history.</p>
+          <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+            Connect Wallet
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8">My Dashboard</h1>
+    <div className="container mx-auto px-4 py-12 dark:bg-dark-primary min-h-screen">
+      <h1 className="text-3xl font-bold mb-8 dark:text-dark-text">My Dashboard</h1>
       
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -154,15 +169,15 @@ const Dashboard = () => {
       </div>
       
       {/* Tab Navigation */}
-      <div className="flex border-b mb-6">
+      <div className="flex border-b border-gray-200 dark:border-dark-accent mb-6">
         <button
-          className={`px-4 py-2 font-medium ${activeTab === 'portfolio' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-600'}`}
+          className={`px-4 py-2 font-medium border-b-2 ${activeTab === 'portfolio' ? 'text-green-600 dark:text-terragreen-400 border-green-600 dark:border-terragreen-400' : 'text-gray-600 dark:text-dark-muted border-transparent'}`}
           onClick={() => setActiveTab('portfolio')}
         >
           My Portfolio
         </button>
         <button
-          className={`px-4 py-2 font-medium ${activeTab === 'transactions' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-600'}`}
+          className={`px-4 py-2 font-medium border-b-2 ${activeTab === 'transactions' ? 'text-green-600 dark:text-terragreen-400 border-green-600 dark:border-terragreen-400' : 'text-gray-600 dark:text-dark-muted border-transparent'}`}
           onClick={() => setActiveTab('transactions')}
         >
           Transaction History
@@ -171,33 +186,35 @@ const Dashboard = () => {
       
       {/* Portfolio Tab */}
       {activeTab === 'portfolio' && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white dark:bg-dark-secondary rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-accent">
+            <thead className="bg-gray-50 dark:bg-dark-accent">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CO₂ Offset</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Project</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Amount</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">CO₂ Offset</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-dark-secondary divide-y divide-gray-200 dark:divide-dark-accent">
               {portfolio.map((credit) => (
                 <tr key={credit.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{credit.projectName}</div>
-                    <div className="text-sm text-gray-500">Purchased: {credit.purchaseDate}</div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-dark-text">{credit.projectName}</div>
+                    <div className="text-sm text-gray-500 dark:text-dark-muted">Purchased: {credit.purchaseDate}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-dark-muted">
                     {credit.amount} credits
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-dark-muted">
                     {credit.co2Offset} tonnes
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      credit.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      credit.status === 'Active' 
+                        ? 'bg-green-100 text-green-800 dark:bg-terragreen-900/30 dark:text-terragreen-400' 
+                        : 'bg-gray-100 text-gray-800 dark:bg-dark-accent dark:text-dark-muted'
                     }`}>
                       {credit.status}
                     </span>
@@ -206,7 +223,7 @@ const Dashboard = () => {
                     {credit.status === 'Active' && (
                       <button 
                         onClick={() => openRetireModal(credit)}
-                        className="text-green-600 hover:text-green-900 flex items-center"
+                        className="text-green-600 dark:text-terragreen-400 hover:text-green-900 dark:hover:text-terragreen-300 flex items-center"
                       >
                         <ArrowDown className="h-4 w-4 mr-1" /> Retire
                       </button>
@@ -221,37 +238,39 @@ const Dashboard = () => {
       
       {/* Transactions Tab */}
       {activeTab === 'transactions' && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white dark:bg-dark-secondary rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-accent">
+            <thead className="bg-gray-50 dark:bg-dark-accent">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Project</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Amount</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-dark-muted uppercase tracking-wider">Value</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-dark-secondary divide-y divide-gray-200 dark:divide-dark-accent">
               {transactions.map((transaction) => (
                 <tr key={transaction.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-dark-muted">
                     {transaction.date}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      transaction.type === 'Purchase' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                      transaction.type === 'Purchase' 
+                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' 
+                        : 'bg-green-100 text-green-800 dark:bg-terragreen-900/30 dark:text-terragreen-400'
                     }`}>
                       {transaction.type}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-dark-text">
                     {transaction.projectName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-dark-muted">
                     {transaction.amount} credits
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-dark-muted">
                     {transaction.type === 'Purchase' ? `$${transaction.value.toFixed(2)}` : '-'}
                   </td>
                 </tr>
@@ -264,34 +283,34 @@ const Dashboard = () => {
       {/* Retire Modal */}
       {isRetireModalOpen && selectedCredit && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Retire Carbon Credits</h3>
-            <p className="text-gray-600 mb-4">
+          <div className="bg-white dark:bg-dark-secondary rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4 dark:text-dark-text">Retire Carbon Credits</h3>
+            <p className="text-gray-600 dark:text-dark-muted mb-4">
               Retiring credits permanently removes them from circulation and generates a certificate for your offset.
             </p>
             
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Project</label>
-              <div className="text-gray-900">{selectedCredit.projectName}</div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">Project</label>
+              <div className="text-gray-900 dark:text-dark-text">{selectedCredit.projectName}</div>
             </div>
             
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Amount to Retire</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">Amount to Retire</label>
               <input
                 type="number"
                 min="1"
                 max={selectedCredit.amount}
                 value={retireAmount}
                 onChange={(e) => setRetireAmount(Number(e.target.value))}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
+                className="w-full border border-gray-300 dark:border-dark-accent rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text"
               />
-              <p className="text-sm text-gray-500 mt-1">You have {selectedCredit.amount} credits available</p>
+              <p className="text-sm text-gray-500 dark:text-dark-muted mt-1">You have {selectedCredit.amount} credits available</p>
             </div>
             
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setIsRetireModalOpen(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 dark:border-dark-accent rounded-md text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-accent"
               >
                 Cancel
               </button>
@@ -312,15 +331,17 @@ const Dashboard = () => {
 // Stat Card Component
 const StatCard = ({ title, value, unit, icon }: StatCardProps) => {
   return (
-    <div className="bg-white p-6 rounded-xl shadow">
+    <div className="bg-white dark:bg-dark-secondary p-6 rounded-xl shadow">
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-gray-500 text-sm">{title}</p>
-          <p className="text-2xl font-bold mt-1">
-            {value} <span className="text-gray-500 text-sm font-normal">{unit}</span>
+          <p className="text-gray-500 dark:text-dark-muted text-sm">{title}</p>
+          <p className="text-2xl font-bold mt-1 dark:text-dark-text">
+            {value} <span className="text-gray-500 dark:text-dark-muted text-sm font-normal">{unit}</span>
           </p>
         </div>
-        {icon}
+        <div className="dark:text-terragreen-400">
+          {icon}
+        </div>
       </div>
     </div>
   );

@@ -214,14 +214,14 @@ const ProjectSubmission = () => {
   // Render success state
   if (isSubmitted) {
     return (
-      <div className="container mx-auto px-4 py-12 max-w-3xl">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center">
-          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-green-800 mb-2">Project Submitted Successfully!</h2>
-          <p className="text-green-700 mb-6">
+      <div className="container mx-auto px-4 py-12 max-w-3xl dark:bg-dark-primary">
+        <div className="bg-green-50 border border-green-200 dark:bg-dark-secondary dark:border-terragreen-800/30 rounded-lg p-8 text-center">
+          <CheckCircle className="h-16 w-16 text-green-500 dark:text-terragreen-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-green-800 dark:text-terragreen-400 mb-2">Project Submitted Successfully!</h2>
+          <p className="text-green-700 dark:text-terragreen-300 mb-6">
             Your project has been submitted for review. You will receive email updates about the verification process.
           </p>
-          <p className="text-sm text-green-600 mb-4">
+          <p className="text-sm text-green-600 dark:text-terragreen-400 mb-4">
             Reference ID: {Math.random().toString(36).substring(2, 10).toUpperCase()}
           </p>
           <button
@@ -236,41 +236,41 @@ const ProjectSubmission = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-3xl">
-      <h1 className="text-3xl font-bold mb-8">Submit Carbon Project</h1>
+    <div className="container mx-auto px-4 py-12 max-w-3xl dark:bg-dark-primary">
+      <h1 className="text-3xl font-bold mb-8 dark:text-dark-text">Submit Carbon Project</h1>
       
       {/* Progress Steps */}
       <div className="flex items-center mb-8">
         <div className={`flex items-center justify-center h-10 w-10 rounded-full border-2 ${
-          step >= 1 ? 'bg-green-600 border-green-600 text-white' : 'border-gray-300 text-gray-500'
+          step >= 1 ? 'bg-green-600 border-green-600 text-white' : 'border-gray-300 dark:border-dark-accent text-gray-500 dark:text-dark-muted'
         }`}>
           1
         </div>
-        <div className={`flex-1 h-1 mx-2 ${step >= 2 ? 'bg-green-600' : 'bg-gray-300'}`}></div>
+        <div className={`flex-1 h-1 mx-2 ${step >= 2 ? 'bg-green-600' : 'bg-gray-300 dark:bg-dark-accent'}`}></div>
         <div className={`flex items-center justify-center h-10 w-10 rounded-full border-2 ${
-          step >= 2 ? 'bg-green-600 border-green-600 text-white' : 'border-gray-300 text-gray-500'
+          step >= 2 ? 'bg-green-600 border-green-600 text-white' : 'border-gray-300 dark:border-dark-accent text-gray-500 dark:text-dark-muted'
         }`}>
           2
         </div>
-        <div className={`flex-1 h-1 mx-2 ${step >= 3 ? 'bg-green-600' : 'bg-gray-300'}`}></div>
+        <div className={`flex-1 h-1 mx-2 ${step >= 3 ? 'bg-green-600' : 'bg-gray-300 dark:bg-dark-accent'}`}></div>
         <div className={`flex items-center justify-center h-10 w-10 rounded-full border-2 ${
-          step >= 3 ? 'bg-green-600 border-green-600 text-white' : 'border-gray-300 text-gray-500'
+          step >= 3 ? 'bg-green-600 border-green-600 text-white' : 'border-gray-300 dark:border-dark-accent text-gray-500 dark:text-dark-muted'
         }`}>
           3
         </div>
       </div>
       
       {/* Form */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white dark:bg-dark-secondary rounded-lg shadow-md p-6">
         <form onSubmit={handleSubmit}>
           {/* Step 1: Project Details */}
           {step === 1 && (
             <div>
-              <h2 className="text-xl font-semibold mb-4">Project Details</h2>
+              <h2 className="text-xl font-semibold mb-4 dark:text-dark-text">Project Details</h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Project Name*
                   </label>
                   <input
@@ -278,7 +278,7 @@ const ProjectSubmission = () => {
                     name="projectName"
                     value={formData.projectName}
                     onChange={handleChange}
-                    className={`w-full border ${errors.projectName ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                    className={`w-full border ${errors.projectName ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                   />
                   {errors.projectName && (
                     <p className="text-red-500 text-sm mt-1">{errors.projectName}</p>
@@ -286,14 +286,14 @@ const ProjectSubmission = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Project Type*
                   </label>
                   <select
                     name="projectType"
                     value={formData.projectType}
                     onChange={handleChange}
-                    className={`w-full border ${errors.projectType ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                    className={`w-full border ${errors.projectType ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                   >
                     <option value="">Select a project type</option>
                     {projectTypes.map((type) => (
@@ -306,7 +306,7 @@ const ProjectSubmission = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Location*
                   </label>
                   <input
@@ -314,7 +314,7 @@ const ProjectSubmission = () => {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className={`w-full border ${errors.location ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                    className={`w-full border ${errors.location ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                     placeholder="Country, Region"
                   />
                   {errors.location && (
@@ -323,7 +323,7 @@ const ProjectSubmission = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Project Description*
                   </label>
                   <textarea
@@ -331,7 +331,7 @@ const ProjectSubmission = () => {
                     value={formData.description}
                     onChange={handleChange}
                     rows={4}
-                    className={`w-full border ${errors.description ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                    className={`w-full border ${errors.description ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                     placeholder="Describe your carbon reduction project"
                   ></textarea>
                   {errors.description && (
@@ -345,12 +345,12 @@ const ProjectSubmission = () => {
           {/* Step 2: Technical Details */}
           {step === 2 && (
             <div>
-              <h2 className="text-xl font-semibold mb-4">Technical Details</h2>
+              <h2 className="text-xl font-semibold mb-4 dark:text-dark-text">Technical Details</h2>
               
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                       Start Date*
                     </label>
                     <input
@@ -358,7 +358,7 @@ const ProjectSubmission = () => {
                       name="startDate"
                       value={formData.startDate}
                       onChange={handleChange}
-                      className={`w-full border ${errors.startDate ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                      className={`w-full border ${errors.startDate ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                     />
                     {errors.startDate && (
                       <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>
@@ -366,7 +366,7 @@ const ProjectSubmission = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                       End Date*
                     </label>
                     <input
@@ -374,7 +374,7 @@ const ProjectSubmission = () => {
                       name="endDate"
                       value={formData.endDate}
                       onChange={handleChange}
-                      className={`w-full border ${errors.endDate ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                      className={`w-full border ${errors.endDate ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                     />
                     {errors.endDate && (
                       <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>
@@ -383,7 +383,7 @@ const ProjectSubmission = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Estimated Carbon Credits (tonnes CO₂)*
                   </label>
                   <input
@@ -392,7 +392,7 @@ const ProjectSubmission = () => {
                     value={formData.estimatedCredits}
                     onChange={handleChange}
                     min="1"
-                    className={`w-full border ${errors.estimatedCredits ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                    className={`w-full border ${errors.estimatedCredits ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                   />
                   {errors.estimatedCredits && (
                     <p className="text-red-500 text-sm mt-1">{errors.estimatedCredits}</p>
@@ -400,7 +400,7 @@ const ProjectSubmission = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Verification Methodology*
                   </label>
                   <textarea
@@ -408,7 +408,7 @@ const ProjectSubmission = () => {
                     value={formData.methodology}
                     onChange={handleChange}
                     rows={3}
-                    className={`w-full border ${errors.methodology ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                    className={`w-full border ${errors.methodology ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                     placeholder="Describe the methodology used to calculate carbon reduction"
                   ></textarea>
                   {errors.methodology && (
@@ -422,11 +422,11 @@ const ProjectSubmission = () => {
           {/* Step 3: Contact & Documentation */}
           {step === 3 && (
             <div>
-              <h2 className="text-xl font-semibold mb-4">Contact & Documentation</h2>
+              <h2 className="text-xl font-semibold mb-4 dark:text-dark-text">Contact & Documentation</h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Contact Name*
                   </label>
                   <input
@@ -434,7 +434,7 @@ const ProjectSubmission = () => {
                     name="contactName"
                     value={formData.contactName}
                     onChange={handleChange}
-                    className={`w-full border ${errors.contactName ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                    className={`w-full border ${errors.contactName ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                   />
                   {errors.contactName && (
                     <p className="text-red-500 text-sm mt-1">{errors.contactName}</p>
@@ -442,7 +442,7 @@ const ProjectSubmission = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Contact Email*
                   </label>
                   <input
@@ -450,7 +450,7 @@ const ProjectSubmission = () => {
                     name="contactEmail"
                     value={formData.contactEmail}
                     onChange={handleChange}
-                    className={`w-full border ${errors.contactEmail ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
+                    className={`w-full border ${errors.contactEmail ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'} rounded-md px-3 py-2 dark:bg-dark-primary dark:text-dark-text`}
                   />
                   {errors.contactEmail && (
                     <p className="text-red-500 text-sm mt-1">{errors.contactEmail}</p>
@@ -458,12 +458,12 @@ const ProjectSubmission = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-dark-muted mb-1">
                     Project Documentation*
                   </label>
-                  <div className={`border-2 border-dashed p-4 rounded-lg text-center ${errors.files ? 'border-red-500' : 'border-gray-300'}`}>
-                    <Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600 mb-2">
+                  <div className={`border-2 border-dashed p-4 rounded-lg text-center ${errors.files ? 'border-red-500' : 'border-gray-300 dark:border-dark-accent'}`}>
+                    <Upload className="h-8 w-8 mx-auto text-gray-400 dark:text-dark-muted mb-2" />
+                    <p className="text-sm text-gray-600 dark:text-dark-muted mb-2">
                       Upload project documentation, verification reports, and other relevant files
                     </p>
                     <input
@@ -475,7 +475,7 @@ const ProjectSubmission = () => {
                     />
                     <label
                       htmlFor="file-upload"
-                      className="bg-white border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
+                      className="bg-white dark:bg-dark-primary border border-gray-300 dark:border-dark-accent rounded-md px-4 py-2 text-sm font-medium text-gray-700 dark:text-dark-text hover:bg-gray-50 dark:hover:bg-dark-accent cursor-pointer"
                     >
                       Select Files
                     </label>
@@ -488,10 +488,10 @@ const ProjectSubmission = () => {
                   {/* File List */}
                   {formData.files.length > 0 && (
                     <div className="mt-4">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Selected Files:</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-dark-muted mb-2">Selected Files:</p>
                       <ul className="space-y-2">
                         {formData.files.map((file, index) => (
-                          <li key={index} className="flex justify-between items-center text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                          <li key={index} className="flex justify-between items-center text-sm text-gray-600 dark:text-dark-muted bg-gray-50 dark:bg-dark-accent p-2 rounded">
                             <span>{file.name}</span>
                             <button 
                               type="button"
@@ -509,9 +509,9 @@ const ProjectSubmission = () => {
               </div>
               
               {errors.submit && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start">
+                <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-lg flex items-start">
                   <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
-                  <p className="text-red-700 text-sm">{errors.submit}</p>
+                  <p className="text-red-700 dark:text-red-400 text-sm">{errors.submit}</p>
                 </div>
               )}
             </div>
@@ -523,7 +523,7 @@ const ProjectSubmission = () => {
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex items-center text-gray-600 hover:text-gray-900"
+                className="flex items-center text-gray-600 dark:text-dark-muted hover:text-gray-900 dark:hover:text-dark-text"
               >
                 <ArrowLeft className="h-4 w-4 mr-1" /> Previous
               </button>

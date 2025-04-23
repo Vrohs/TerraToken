@@ -32,7 +32,9 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const checkConnection = async () => {
-      // Check if ethereum is available in window
+      // Check
+      // for
+      //  eth
       if (typeof window !== 'undefined' && window.ethereum) {
         try {
           const ethProvider = new ethers.BrowserProvider(window.ethereum);

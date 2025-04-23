@@ -67,8 +67,8 @@ const Marketplace = () => {
   });
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8">Carbon Credit Marketplace</h1>
+    <div className="container mx-auto px-4 py-12 dark:bg-dark-primary min-h-screen">
+      <h1 className="text-3xl font-bold mb-8 dark:text-dark-text">Carbon Credit Marketplace</h1>
       
       {/* Search and Filters */}
       <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -77,14 +77,14 @@ const Marketplace = () => {
           <input
             type="text"
             placeholder="Search projects..."
-            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full"
+            className="pl-10 pr-4 py-2 border border-gray-300 dark:border-dark-accent rounded-lg w-full dark:bg-dark-secondary dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-terragreen-600"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="flex-shrink-0">
           <select
-            className="px-4 py-2 border border-gray-300 rounded-lg w-full"
+            className="px-4 py-2 border border-gray-300 dark:border-dark-accent rounded-lg w-full dark:bg-dark-secondary dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-terragreen-600"
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
           >
@@ -101,6 +101,22 @@ const Marketplace = () => {
           <CreditCard key={credit.id} credit={credit} />
         ))}
       </div>
+      
+      {/* No Results Message */}
+      {filteredCredits.length === 0 && (
+        <div className="text-center py-10">
+          <p className="text-gray-600 dark:text-dark-muted text-lg">No carbon credits found matching your criteria.</p>
+          <button 
+            onClick={() => {
+              setSearchTerm('');
+              setSelectedType('All');
+            }}
+            className="mt-4 text-green-600 dark:text-terragreen-400 hover:underline"
+          >
+            Clear filters
+          </button>
+        </div>
+      )}
     </div>
   );
 };
@@ -108,7 +124,7 @@ const Marketplace = () => {
 // Carbon Credit Card Component
 const CreditCard = ({ credit }: { credit: CarbonCredit }) => {
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 hover:shadow-lg transition">
+    <div className="bg-white dark:bg-dark-secondary rounded-xl overflow-hidden shadow-md border border-gray-100 dark:border-dark-accent hover:shadow-lg transition">
       <div className="h-48 overflow-hidden">
         <img 
           src={credit.imageUrl} 
@@ -118,27 +134,27 @@ const CreditCard = ({ credit }: { credit: CarbonCredit }) => {
       </div>
       <div className="p-6">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-semibold">{credit.projectName}</h3>
-          <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+          <h3 className="text-xl font-semibold dark:text-dark-text">{credit.projectName}</h3>
+          <span className="bg-green-100 dark:bg-terragreen-900/30 text-green-800 dark:text-terragreen-400 text-xs px-2 py-1 rounded">
             {credit.projectType}
           </span>
         </div>
-        <p className="text-gray-600 mb-4">Location: {credit.location}</p>
+        <p className="text-gray-600 dark:text-dark-muted mb-4">Location: {credit.location}</p>
         
-        <div className="flex justify-between text-sm text-gray-500 mb-4">
+        <div className="flex justify-between text-sm text-gray-500 dark:text-dark-muted mb-4">
           <div>
             <p>Available</p>
-            <p className="font-semibold text-gray-800">{credit.creditsAvailable} credits</p>
+            <p className="font-semibold text-gray-800 dark:text-dark-text">{credit.creditsAvailable} credits</p>
           </div>
           <div>
             <p>Price per credit</p>
-            <p className="font-semibold text-gray-800">${credit.pricePerCredit.toFixed(2)}</p>
+            <p className="font-semibold text-gray-800 dark:text-dark-text">${credit.pricePerCredit.toFixed(2)}</p>
           </div>
         </div>
         
         <div className="flex items-center mb-4">
           <Info className="h-4 w-4 text-blue-500 mr-1" />
-          <span className="text-xs text-gray-500">Verified by {credit.verifiedBy}</span>
+          <span className="text-xs text-gray-500 dark:text-dark-muted">Verified by {credit.verifiedBy}</span>
         </div>
         
         <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-semibold transition">
