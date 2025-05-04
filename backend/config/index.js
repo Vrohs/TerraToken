@@ -20,6 +20,10 @@ const config = {
   alchemyRpcUrl: process.env.ALCHEMY_RPC_URL,
   privateKey: process.env.PRIVATE_KEY,
   
+  // Clerk Authentication
+  clerkApiKey: process.env.CLERK_API_KEY,
+  clerkJwkUrl: process.env.CLERK_JWK_URL || 'https://api.clerk.dev/v1/jwks',
+  
   // Contract addresses
   carbonCreditAddress: process.env.CARBON_CREDIT_ADDRESS,
   verificationAddress: process.env.VERIFICATION_ADDRESS,
@@ -39,7 +43,12 @@ const config = {
   goldStandardMockEnabled: process.env.GOLD_STANDARD_MOCK_ENABLED === 'true',
   goldStandardApiUrl: process.env.GOLD_STANDARD_API_URL,
   goldStandardApiKey: process.env.GOLD_STANDARD_API_KEY,
-  goldStandardIntegrationEnabled: process.env.GOLD_STANDARD_INTEGRATION_ENABLED === 'true'
+  goldStandardIntegrationEnabled: process.env.GOLD_STANDARD_INTEGRATION_ENABLED === 'true',
+  
+  // Clerk Authentication
+  clerkPublishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+  clerkSecretKey: process.env.CLERK_SECRET_KEY, 
+  clerkApiKey: process.env.CLERK_API_KEY
 };
 
 module.exports = { config };

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Wallet, Mail, AlertCircle } from 'lucide-react';
+import { SignIn } from '@clerk/clerk-react';
+import { useClerkAuth } from '../context/ClerkAuthContext';
+import { authAPI } from '../services/api';
 
 // TypeScript interface for window.ethereum
 declare global {
@@ -20,87 +23,70 @@ interface WalletError extends Error {
 
 const Login = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useClerkAuth();
   const [activeTab, setActiveTab] = useState('email');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [isWalletConnecting, setIsWalletConnecting] = useState(false);
+  const [error, setError] = useState('');
 
   const isMetaMaskAvailable = typeof window !== 'undefined' && window.ethereum;
 
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
-  const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    
-    // Simple validation
-    if (!email.trim() || !password.trim()) {
-      setError('Please enter both email and password');
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    try {
-      // In a real app, this would be an API call to your authentication endpoint
-      // For this demo, we'll simulate a login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful login
-      localStorage.setItem('authToken', 'mock-jwt-token');
-      localStorage.setItem('user', JSON.stringify({ email, name: 'Demo User' }));
-      
-      // Redirect to dashboard
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
       navigate('/dashboard');
-    } catch (err) {
-      setError('Invalid email or password. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [isAuthenticated, isLoading, navigate]);
 
-  const connectWallet = async () => {
+  const handleWalletLogin = async () => {
     if (!isMetaMaskAvailable) {
-      setError('MetaMask is not installed. Please install MetaMask to continue.');
+      setError('Please install MetaMask to connect your wallet');
       return;
     }
-    
+
     setIsWalletConnecting(true);
     setError('');
-    
+
     try {
-      // Request accounts access
-      const accounts = await window.ethereum!.request({ method: 'eth_requestAccounts' });
-      const address = accounts[0];
-      
-      // In a real app, you would now verify ownership of this wallet
-      // by asking the user to sign a message, then verify the signature on your backend
-      
-      // For this demo, we'll simulate a successful wallet authentication
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      localStorage.setItem('authToken', 'mock-wallet-jwt-token');
-      localStorage.setItem('user', JSON.stringify({ 
-        walletAddress: address, 
-        name: 'Wallet User'
-      }));
-      
-      // Redirect to dashboard
-      navigate('/dashboard');
-    } catch (err) {
-      const walletError = err as WalletError;
-      if (walletError.code === 4001) {
-        // User rejected the request
-        setError('Please connect your wallet to continue.');
-      } else {
-        setError('Failed to connect wallet. Please try again.');
-        console.error(walletError);
+      if (!window.ethereum) {
+        throw new Error('MetaMask is not available');
       }
+      
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+
+      if (accounts && accounts.length > 0) {
+        const walletAddress = accounts[0];
+        
+        // For demo purposes, create a mock response instead of calling the backend
+        // This ensures the demo works without requiring a complete backend setup
+        const mockAuthData = {
+          success: true,
+          data: {
+            id: '123',
+            name: 'Demo Wallet User',
+            email: `${walletAddress.substring(2, 8)}@example.com`,
+            walletAddress: walletAddress,
+            role: 'user',
+          },
+          token: `mock_jwt_token_${Date.now()}`
+        };
+        
+        // Store the token in localStorage
+        localStorage.setItem('token', mockAuthData.token);
+        localStorage.setItem('user', JSON.stringify(mockAuthData.data));
+        
+        // Navigate to dashboard
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      const walletError = error as WalletError;
+      if (walletError.code === 4001) {
+        setError('You rejected the connection request');
+      } else {
+        setError('Failed to connect wallet: ' + walletError.message);
+      }
+      console.error('Wallet connection error:', error);
     } finally {
       setIsWalletConnecting(false);
     }
@@ -145,95 +131,23 @@ const Login = () => {
             </button>
           </div>
           
-          {/* Email Login Form */}
+          {/* Clerk Sign In */}
           {activeTab === 'email' && (
-            <form onSubmit={handleEmailLogin}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 w-full border border-gray-300 rounded-lg py-2 px-4"
-                      placeholder="you@example.com"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Password
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <input
-                      type={isPasswordVisible ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 w-full border border-gray-300 rounded-lg py-2 px-4"
-                      placeholder="••••••••"
-                    />
-                    <button
-                      type="button"
-                      onClick={togglePasswordVisibility}
-                      className="absolute right-3 top-3 text-gray-400"
-                    >
-                      {isPasswordVisible ? (
-                        <EyeOff className="h-5 w-5" />
-                      ) : (
-                        <Eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      type="checkbox"
-                      className="h-4 w-4 text-green-600 border-gray-300 rounded"
-                    />
-                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                      Remember me
-                    </label>
-                  </div>
-                  
-                  <div className="text-sm">
-                    <a href="#" className="text-green-600 hover:text-green-500">
-                      Forgot password?
-                    </a>
-                  </div>
-                </div>
-                
-                {error && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start">
-                    <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0 mt-0.5" />
-                    <p className="text-red-700 text-sm">{error}</p>
-                  </div>
-                )}
-                
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition"
-                >
-                  {isLoading ? 'Signing in...' : 'Sign in'}
-                </button>
-                
-                <p className="text-center text-sm text-gray-600">
-                  Don't have an account?{' '}
-                  <a href="#" className="text-green-600 hover:underline">
-                    Sign up
-                  </a>
-                </p>
-              </div>
-            </form>
+            <div className="clerk-sign-in-container">
+              <SignIn 
+                routing="path" 
+                path="/login" 
+                appearance={{
+                  elements: {
+                    formButtonPrimary: 'bg-green-600 hover:bg-green-700',
+                    footerAction: 'text-green-600',
+                    card: 'border-0 shadow-none',
+                  }
+                }}
+                afterSignInUrl="/dashboard"
+                signUpUrl="/login"
+              />
+            </div>
           )}
           
           {/* Wallet Connect */}
@@ -244,7 +158,7 @@ const Login = () => {
               </p>
               
               <button
-                onClick={connectWallet}
+                onClick={handleWalletLogin}
                 disabled={isWalletConnecting}
                 className="w-full flex items-center justify-center bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition"
               >

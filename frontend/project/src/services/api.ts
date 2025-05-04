@@ -42,6 +42,7 @@ export const authAPI = {
   getNonce: (walletAddress: string) => api.get(`/auth/nonce/${walletAddress}`),
   verifyWallet: (data: any) => api.post('/auth/verify-wallet', data),
   getProfile: () => api.get('/auth/me'),
+  syncClerkUser: (userData: any) => api.post('/auth/sync-clerk-user', userData),
 };
 
 // Projects API

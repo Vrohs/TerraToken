@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Leaf, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Leaf, Menu, X, LogOut } from 'lucide-react';
+import { useClerkAuth } from '../../context/ClerkAuthContext';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useClerkAuth();
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -122,25 +125,45 @@ const Navigation = () => {
               </Link>
             ))}
             <div className="pt-2 border-t">
-              {isWalletConnected ? (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">
-                    {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
-                  </span>
+              {isAuthenticated ? (
+                <div className="py-2">
+                  <div className="flex items-center mb-3">
+                    {user?.imageUrl ? (
+                      <img 
+                        src={user.imageUrl} 
+                        alt="Profile" 
+                        className="w-8 h-8 rounded-full border border-gray-200 mr-2"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                        <span className="text-lg font-semibold text-green-600">
+                          {(user?.firstName?.[0] || user?.name?.[0] || 'U').toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <span className="text-sm font-medium">
+                      {user?.firstName || user?.name?.split(' ')[0] || 'User'}
+                    </span>
+                  </div>
                   <button
-                    onClick={disconnectWallet}
-                    className="text-gray-600 hover:text-red-600 text-sm"
+                    onClick={() => {
+                      logout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex items-center text-red-600 py-2"
                   >
-                    Disconnect
+                    <LogOut className="h-4 w-4 mr-2" />
+                    <span>Logout</span>
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={connectWallet}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
+                <Link
+                  to="/login"
+                  className="block w-full text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition"
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  Connect Wallet
-                </button>
+                  Sign In
+                </Link>
               )}
             </div>
           </div>

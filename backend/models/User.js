@@ -23,6 +23,14 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Please add a wallet address'],
     unique: true
   },
+  clerkId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  profileImage: {
+    type: String
+  },
   role: {
     type: String,
     enum: ['user', 'project_developer', 'validator', 'admin'],

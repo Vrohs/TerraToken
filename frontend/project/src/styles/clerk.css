@@ -1,0 +1,40 @@
+/* Clerk Auth styles */
+.clerk-sign-in-container {
+  --clerk-primary: #16a34a !important; /* Green 600 from Tailwind */
+  --clerk-primary-hover: #15803d !important; /* Green 700 from Tailwind */
+  --clerk-text: #1f2937 !important; /* Gray 800 from Tailwind */
+  --clerk-text-secondary: #4b5563 !important; /* Gray 600 from Tailwind */
+  --clerk-border: #e5e7eb !important; /* Gray 200 from Tailwind */
+  --clerk-background: #ffffff !important;
+  --clerk-border-radius: 0.5rem !important;
+  --clerk-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+  
+  /* Ensure the Clerk UI fits well within our design */
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  font-family: inherit !important;
+}
+
+/* Override Clerk button styles to match our UI */
+.clerk-sign-in-container button {
+  border-radius: 0.375rem !important;
+  font-weight: 500 !important;
+  transition: all 150ms ease-in-out !important;
+}
+
+/* Make sure Clerk component fits properly in our container */
+.cl-rootBox {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.cl-card {
+  box-shadow: none !important;
+  width: 100% !important;
+}
+
+/* Hide Clerk footer for cleaner look */
+.cl-footer {
+  display: none !important;
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart2, Clock, Award, RefreshCw, ArrowDown } from 'lucide-react';
+import { BarChart2, Clock, Award, RefreshCw, ArrowDown, User, Wallet } from 'lucide-react';
+import { useClerkAuth } from '../context/ClerkAuthContext';
 
 // Define interfaces for better type safety
 interface CreditItem {
@@ -82,6 +83,68 @@ const mockTransactions: TransactionItem[] = [
   }
 ];
 
+// User Profile Section Component
+const UserProfileSection = () => {
+  const { user, isLoading } = useClerkAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-xl shadow p-6 flex items-center">
+        <div className="animate-pulse flex space-x-4 w-full">
+          <div className="rounded-full bg-gray-200 h-12 w-12"></div>
+          <div className="flex-1 space-y-4 py-1">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="bg-white rounded-xl shadow p-6">
+      <div className="flex items-center">
+        <div className="flex-shrink-0">
+          {user?.imageUrl ? (
+            <img 
+              src={user.imageUrl} 
+              alt="Profile" 
+              className="h-16 w-16 rounded-full object-cover"
+            />
+          ) : (
+            <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+              <User className="h-8 w-8 text-green-600" />
+            </div>
+          )}
+        </div>
+        <div className="ml-4">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : user?.email || 'TerraToken User'}
+          </h2>
+          <div className="mt-1 flex items-center">
+            <span className="text-sm text-gray-500 mr-4">
+              {user?.email || 'No email provided'}
+            </span>
+            {user?.walletAddress && (
+              <div className="flex items-center text-sm text-gray-500">
+                <Wallet className="h-4 w-4 mr-1" />
+                {`${user.walletAddress.substring(0, 6)}...${user.walletAddress.substring(user.walletAddress.length - 4)}`}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="text-sm text-gray-500">
+          <p>Member since: {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Today'}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Dashboard = () => {
   const [portfolio, setPortfolio] = useState(mockPortfolio);
   const [transactions, setTransactions] = useState(mockTransactions);
@@ -129,6 +192,10 @@ const Dashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <div className="mb-8">
+        <UserProfileSection />
+      </div>
+      
       <h1 className="text-3xl font-bold mb-8">My Dashboard</h1>
       
       {/* Stats Overview */}
