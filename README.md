@@ -1,93 +1,151 @@
+# TerraToken: Carbon Credit Trading Platform
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
-```
-
-
-
-## What Is This Project?
-A platform that allows people to buy and sell carbon credits (certificates representing reduced carbon emissions) using both traditional web technology and blockchain to ensure transactions are transparent and trustworthy.
+TerraToken is a blockchain-based platform that allows people to buy and sell carbon credits (certificates representing reduced carbon emissions) using both traditional web technology and blockchain to ensure transactions are transparent and trustworthy.
 
 ## Why It Matters
+
 Companies need carbon credits to offset emissions, but current markets lack transparency. Our platform solves this by recording all transactions on a blockchain where they cannot be altered.
 
-## System Overview
+## Simplified Demo Setup Guide
 
-- **User-friendly web interface** built with React
-- **Backend services** using Express.js and Node.js
-- **Database** using MongoDB for user data and project information
-- **Blockchain component** using Polygon for transparent record-keeping
-- **Document storage** using IPFS (a decentralized storage system)
+For a quick and easy demo setup, use our simplified script:
 
-## Key Features
+```bash
+# Make the script executable
+chmod +x setup-demo-simple.js
 
-### For Users
-- **Simple Authentication**: Connect with MetaMask wallet or traditional username/password
-- **Marketplace**: Browse carbon credits with clear project information
-- **Dashboard**: Track your carbon credit portfolio and impact
-- **Certificate Generation**: Get proof when you "retire" (use) a carbon credit
+# Run the simplified setup
+node setup-demo-simple.js
+```
 
-### For Project Owners
-- **Project Submission**: Register carbon reduction projects
-- **Documentation Management**: Upload verification documents
-- **Credit Issuance**: Receive tradable carbon credit tokens
+This will guide you through:
+1. Starting a local Ethereum blockchain
+2. Compiling and deploying smart contracts
+3. Generating demo data
+4. Starting the application
 
+### Manual Setup
 
-## How It Works
+If you prefer to set up manually, follow these steps:
 
-### Creating Carbon Credits
-1. A project owner (maybe a solar farm) registers their project
-2. They upload evidence of carbon reduction to IPFS
-3. Once verified, carbon credits are created as blockchain tokens
+#### 1. Install Dependencies
 
-### Buying Carbon Credits
-1. Buyers browse available credits in the marketplace
-2. When a purchase is made, the transaction is recorded on the blockchain
-3. Ownership transfers automatically and securely
+```bash
+# Install root dependencies
+npm install
 
-### Using (Retiring) Credits
-1. When a company wants to claim their offset, they "retire" the credit
-2. This process generates a certificate and permanently removes the credit from circulation
+# Install backend dependencies
+cd backend && npm install
 
-## Technical Components
+# Install frontend dependencies
+cd frontend/project && npm install
+```
 
-### Frontend (What Users See)
-- React application with Material UI components
-- Web3.js for blockchain wallet integration
-- Interactive dashboards showing carbon impact
+#### 2. Configure Environment
 
-### Backend (Server-Side Logic)
-- Express.js REST API
-- Authentication system with JWT tokens
-- Integration services connecting to blockchain
+```bash
+# Copy sample .env file
+cp backend/.env.example backend/.env
+```
 
-### Data Storage
-- MongoDB for user accounts, listings, and project details
-- IPFS for immutable document storage
+#### 3. Compile Smart Contracts
 
-### Blockchain Layer
-- **Carbon Credit Tokens**: Digital representation of carbon credits
-- **Marketplace Contract**: Handles buying and selling
-- **Project Registry**: Records verified carbon projects
+```bash
+npx hardhat compile
+```
 
-## Project Implementation Plan
+#### 4. Deploy Contracts Locally
 
-1. **Phase 1**: Create basic user authentication and marketplace UI
-2. **Phase 2**: Implement blockchain integration for transactions
-3. **Phase 3**: Add project submission and verification workflow
-4. **Phase 4**: Develop analytics and reporting features
+```bash
+# Start a local Hardhat node
+npx hardhat node
 
-## Learning Outcomes
+# In a new terminal, deploy contracts
+npx hardhat run scripts/deploy.js --network localhost
+```
 
-This project teaches:
-- Full-stack web development with MERN stack
-- Blockchain integration for real-world applications
-- Environmental market mechanisms
-- Building systems that require trust and transparency
+#### 5. Generate Demo Data
+
+```bash
+cd backend
+node src/utils/demo-data.js
+```
+
+#### 6. Start the Application
+
+```bash
+# Start the backend server
+cd backend
+npm start
+
+# In a new terminal, start the frontend
+cd frontend/project
+npm run dev
+```
+
+## Demo Accounts
+
+For demonstration purposes, the following accounts are available:
+
+1. **Project Developer**
+   - Email: developer@terratoken.com
+   - Password: password123
+   - Wallet: 0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266 (Hardhat #0)
+
+2. **Verifier**
+   - Email: verifier@terratoken.com
+   - Password: password123
+   - Wallet: 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 (Hardhat #1)
+
+3. **Trader**
+   - Email: trader@terratoken.com
+   - Password: password123
+   - Wallet: 0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc (Hardhat #2)
+
+## Demo Flow
+
+1. **Project Registration**:
+   - Login as Project Developer
+   - Submit a new carbon reduction project
+   - Upload project documentation
+
+2. **Project Verification**:
+   - Login as Verifier
+   - Review submitted project
+   - Approve project and issue carbon credits
+
+3. **Marketplace Trading**:
+   - Login as Trader
+   - Browse available carbon credits
+   - Purchase credits from the marketplace
+
+4. **Credit Retirement**:
+   - Login as Trader
+   - Retire carbon credits to offset emissions
+
+## For Developers
+
+### Smart Contracts
+
+The platform uses three main smart contracts:
+
+1. **CarbonCredit.sol**: ERC-721 token representing carbon credits
+2. **Verification.sol**: Manages project verification and credit issuance
+3. **CarbonCreditMarket.sol**: Handles marketplace listings and purchases
+
+### Testing
+
+```bash
+# Run smart contract tests
+npx hardhat test
+
+# Run backend tests
+cd backend && npm test
+```
+
+## Contact
+
+For questions or support with this demo, please contact the team at info@terratoken.com.
 
 
 

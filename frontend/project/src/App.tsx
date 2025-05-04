@@ -11,7 +11,7 @@ import Login from './pages/Login';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 
-// Context
+
 import { Web3Provider } from './context/Web3Context';
 
 function App() {

@@ -69,7 +69,7 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
+                <a href="frontend/project/public/assets/CT2022-India-Web.pdf" className="text-gray-600 hover:text-gray-900">
                   Carbon Standards
                 </a>
               </li>
