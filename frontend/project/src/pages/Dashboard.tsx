@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BarChart2, Clock, Award, RefreshCw, ArrowDown, User, Wallet } from 'lucide-react';
+import React, { useState } from 'react';
+import { BarChart2, Award, RefreshCw, ArrowDown, User, Wallet, LogOut } from 'lucide-react';
 import { useClerkAuth } from '../context/ClerkAuthContext';
 
 // Define interfaces for better type safety
@@ -85,7 +85,7 @@ const mockTransactions: TransactionItem[] = [
 
 // User Profile Section Component
 const UserProfileSection = () => {
-  const { user, isLoading } = useClerkAuth();
+  const { user, isLoading, logout } = useClerkAuth();
   
   if (isLoading) {
     return (
@@ -135,6 +135,13 @@ const UserProfileSection = () => {
             )}
           </div>
         </div>
+        <button
+          onClick={logout}
+          className="ml-auto flex items-center text-red-600 hover:text-red-800"
+        >
+          <LogOut className="h-5 w-5 mr-1" />
+          <span>Logout</span>
+        </button>
       </div>
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="text-sm text-gray-500">

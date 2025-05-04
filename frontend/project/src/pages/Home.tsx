@@ -148,7 +148,7 @@ const Home = () => {
             Join our growing community of environmentally conscious organizations and individuals.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/signup" className="bg-white text-green-700 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition shadow-lg">
+            <Link to="/login" className="bg-white text-green-700 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition shadow-lg">
               Create Free Account
             </Link>
             <Link to="/contact" className="bg-transparent hover:bg-green-700 text-white px-8 py-4 rounded-lg font-semibold transition border border-white">
